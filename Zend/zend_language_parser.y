@@ -97,7 +97,7 @@ static YYSIZE_T zend_yytnamerr(char*, const char*);
 %token T_IS_NOT_EQUAL "!= (T_IS_NOT_EQUAL)"
 %token T_IS_IDENTICAL "=== (T_IS_IDENTICAL)"
 %token T_IS_NOT_IDENTICAL "!== (T_IS_NOT_IDENTICAL)"
-%nonassoc '<' T_IS_SMALLER_OR_EQUAL '>' T_IS_GREATER_OR_EQUAL
+%nonassoc '<' T_IS_SMALLER_OR_EQUAL '>' T_IS_GREATER_OR_EQUAL T_IN
 %token T_IS_SMALLER_OR_EQUAL "<= (T_IS_SMALLER_OR_EQUAL)"
 %token T_IS_GREATER_OR_EQUAL ">= (T_IS_GREATER_OR_EQUAL)"
 %left T_SL T_SR
@@ -124,6 +124,7 @@ static YYSIZE_T zend_yytnamerr(char*, const char*);
 %token T_CLONE     "clone (T_CLONE)"
 %token T_EXIT      "exit (T_EXIT)"
 %token T_IF        "if (T_IF)"
+%token T_IN        "in (T_IN)"
 %left T_ELSEIF
 %token T_ELSEIF    "elseif (T_ELSEIF)"
 %left T_ELSE 
@@ -770,6 +771,7 @@ expr_without_variable:
 	|	expr '*' expr	{ zend_do_binary_op(ZEND_MUL, &$$, &$1, &$3 TSRMLS_CC); }
 	|	expr '/' expr	{ zend_do_binary_op(ZEND_DIV, &$$, &$1, &$3 TSRMLS_CC); }
 	|	expr '%' expr 	{ zend_do_binary_op(ZEND_MOD, &$$, &$1, &$3 TSRMLS_CC); }
+    |   expr T_IN expr  { zend_do_binary_op(ZEND_IN, &$$, &$1, &$3 TSRMLS_CC); }
 	| 	expr T_SL expr	{ zend_do_binary_op(ZEND_SL, &$$, &$1, &$3 TSRMLS_CC); }
 	|	expr T_SR expr	{ zend_do_binary_op(ZEND_SR, &$$, &$1, &$3 TSRMLS_CC); }
 	|	'+' expr %prec T_INC { ZVAL_LONG(&$1.u.constant, 0); if ($2.op_type == IS_CONST) { add_function(&$2.u.constant, &$1.u.constant, &$2.u.constant TSRMLS_CC); $$ = $2; } else { $1.op_type = IS_CONST; INIT_PZVAL(&$1.u.constant); zend_do_binary_op(ZEND_ADD, &$$, &$1, &$2 TSRMLS_CC); } }

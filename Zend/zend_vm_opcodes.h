@@ -173,5 +173,6 @@ END_EXTERN_C()
 #define ZEND_GENERATOR_RETURN                161
 #define ZEND_FAST_CALL                       162
 #define ZEND_FAST_RET                        163
+#define ZEND_IN                              164
 
 #endif

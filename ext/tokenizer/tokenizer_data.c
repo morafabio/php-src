@@ -2,7 +2,7 @@
    +----------------------------------------------------------------------+
    | PHP Version 5                                                        |
    +----------------------------------------------------------------------+
-   | Copyright (c) 1997-2015 The PHP Group                                |
+   | Copyright (c) 1997-2014 The PHP Group                                |
    +----------------------------------------------------------------------+
    | This source file is subject to version 3.01 of the PHP license,      |
    | that is bundled with this package in the file LICENSE, and is        |
@@ -38,6 +38,7 @@ void tokenizer_register_constants(INIT_FUNC_ARGS) {
 	REGISTER_LONG_CONSTANT("T_LOGICAL_XOR", T_LOGICAL_XOR, CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("T_LOGICAL_AND", T_LOGICAL_AND, CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("T_PRINT", T_PRINT, CONST_CS | CONST_PERSISTENT);
+	REGISTER_LONG_CONSTANT("T_YIELD", T_YIELD, CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("T_SR_EQUAL", T_SR_EQUAL, CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("T_SL_EQUAL", T_SL_EQUAL, CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("T_XOR_EQUAL", T_XOR_EQUAL, CONST_CS | CONST_PERSISTENT);
@@ -73,6 +74,7 @@ void tokenizer_register_constants(INIT_FUNC_ARGS) {
 	REGISTER_LONG_CONSTANT("T_NEW", T_NEW, CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("T_EXIT", T_EXIT, CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("T_IF", T_IF, CONST_CS | CONST_PERSISTENT);
+	REGISTER_LONG_CONSTANT("T_IN", T_IN, CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("T_ELSEIF", T_ELSEIF, CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("T_ELSE", T_ELSE, CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("T_ENDIF", T_ENDIF, CONST_CS | CONST_PERSISTENT);
@@ -108,7 +110,6 @@ void tokenizer_register_constants(INIT_FUNC_ARGS) {
 	REGISTER_LONG_CONSTANT("T_FUNCTION", T_FUNCTION, CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("T_CONST", T_CONST, CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("T_RETURN", T_RETURN, CONST_CS | CONST_PERSISTENT);
-	REGISTER_LONG_CONSTANT("T_YIELD", T_YIELD, CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("T_TRY", T_TRY, CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("T_CATCH", T_CATCH, CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("T_FINALLY", T_FINALLY, CONST_CS | CONST_PERSISTENT);
@@ -174,6 +175,7 @@ char *get_token_type_name(int token_type)
 		case T_LOGICAL_XOR: return "T_LOGICAL_XOR";
 		case T_LOGICAL_AND: return "T_LOGICAL_AND";
 		case T_PRINT: return "T_PRINT";
+		case T_YIELD: return "T_YIELD";
 		case T_SR_EQUAL: return "T_SR_EQUAL";
 		case T_SL_EQUAL: return "T_SL_EQUAL";
 		case T_XOR_EQUAL: return "T_XOR_EQUAL";
@@ -209,6 +211,7 @@ char *get_token_type_name(int token_type)
 		case T_NEW: return "T_NEW";
 		case T_EXIT: return "T_EXIT";
 		case T_IF: return "T_IF";
+		case T_IN: return "T_IN";
 		case T_ELSEIF: return "T_ELSEIF";
 		case T_ELSE: return "T_ELSE";
 		case T_ENDIF: return "T_ENDIF";
@@ -244,7 +247,6 @@ char *get_token_type_name(int token_type)
 		case T_FUNCTION: return "T_FUNCTION";
 		case T_CONST: return "T_CONST";
 		case T_RETURN: return "T_RETURN";
-		case T_YIELD: return "T_YIELD";
 		case T_TRY: return "T_TRY";
 		case T_CATCH: return "T_CATCH";
 		case T_FINALLY: return "T_FINALLY";

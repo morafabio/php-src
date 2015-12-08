@@ -1065,6 +1065,10 @@ NEWLINE ("\r"|"\n"|"\r\n")
 	return T_IF;
 }
 
+<ST_IN_SCRIPTING>"in" {
+    return T_IN;
+}
+
 <ST_IN_SCRIPTING>"elseif" {
 	return T_ELSEIF;
 }

@@ -5449,4 +5449,74 @@ ZEND_VM_HANDLER(163, ZEND_FAST_RET, ANY, ANY)
 	}
 }
 
+ZEND_VM_HANDLER(164, ZEND_IN, CONST|TMP|VAR|CV, CONST|TMP|VAR|CV)
+{
+    USE_OPLINE
+    zend_free_op free_op1, free_op2;
+    zval *op1, *op2;
+
+    SAVE_OPLINE();
+    op1 = GET_OP1_ZVAL_PTR(BP_VAR_R);
+    op2 = GET_OP2_ZVAL_PTR(BP_VAR_R);
+
+    if(Z_TYPE_P(op2) == IS_STRING) {
+        zval op1_copy;
+        int use_copy;
+
+        zend_make_printable_zval(op1, &op1_copy, &use_copy);
+        if (use_copy) {
+            op1 = &op1_copy;
+        }
+        
+        if (Z_STRLEN_P(op1) == 0) {
+            ZVAL_TRUE(&EX_T(opline->result.var).tmp_var);
+        } else {
+            char *found = zend_memnstr(
+                Z_STRVAL_P(op2),                  /* haystack */
+                Z_STRVAL_P(op1),                  /* needle */
+                Z_STRLEN_P(op1),                  /* needle length */
+                Z_STRVAL_P(op2) + Z_STRLEN_P(op2) /* haystack end ptr */
+            );
+            ZVAL_BOOL(&EX_T(opline->result.var).tmp_var, found != NULL);
+        }
+
+        if (use_copy) {
+            zval_dtor(&op1_copy);
+        }
+    }
+    else if (Z_TYPE_P(op2) == IS_ARRAY)
+    {
+        HashPosition pos;
+        zval **value;
+
+        /* Start under the assumption that the value isn't contained */
+        ZVAL_FALSE(&EX_T(opline->result.var).tmp_var);
+
+        /* Iterate through the array */
+        zend_hash_internal_pointer_reset_ex(Z_ARRVAL_P(op2), &pos);
+        while (zend_hash_get_current_data_ex(Z_ARRVAL_P(op2), (void **) &value, &pos) == SUCCESS) {
+            zval result;
+
+            /* Compare values using == */
+            if (is_identical_function(&result, op1, *value TSRMLS_CC) == SUCCESS && Z_LVAL(result)) {
+                ZVAL_TRUE(&EX_T(opline->result.var).tmp_var);
+                break;
+            }
+
+            zend_hash_move_forward_ex(Z_ARRVAL_P(op2), &pos);
+        }
+    }
+    else {
+        zend_error(E_WARNING, "Right operand of 'in' has to be either string or array");
+        ZVAL_FALSE(&EX_T(opline->result.var).tmp_var);
+    }
+
+    FREE_OP1();
+    FREE_OP2();
+    CHECK_EXCEPTION();
+    ZEND_VM_NEXT_OPCODE();
+}
+
+
+
 ZEND_VM_EXPORT_HELPER(zend_do_fcall, zend_do_fcall_common_helper)
