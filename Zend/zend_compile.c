@@ -1652,6 +1652,9 @@ ZEND_API void zend_initialize_class_data(zend_class_entry *ce, zend_bool nullify
 		ce->__callstatic = NULL;
 		ce->__tostring = NULL;
 		ce->__toint = NULL;
+		ce->__tofloat = NULL;
+		ce->__toarray = NULL;
+		ce->__tobool = NULL;
 		ce->create_object = NULL;
 		ce->get_iterator = NULL;
 		ce->iterator_funcs.funcs = NULL;
@@ -4702,6 +4705,21 @@ void zend_begin_method_decl(zend_op_array *op_array, zend_string *name, zend_boo
 				zend_error(E_WARNING, "The magic method __toInt() must have "
 					"public visibility and cannot be static");
 			}
+		} else if (zend_string_equals_literal(lcname, ZEND_TOFLOAT_FUNC_NAME)) {
+			if (!is_public || is_static) {
+				zend_error(E_WARNING, "The magic method __toFloat() must have "
+					"public visibility and cannot be static");
+			}
+		} else if (zend_string_equals_literal(lcname, ZEND_TOINT_FUNC_NAME)) {
+			if (!is_public || is_static) {
+				zend_error(E_WARNING, "The magic method __toArray() must have "
+					"public visibility and cannot be static");
+			}
+		} else if (zend_string_equals_literal(lcname, ZEND_TOBOOL_FUNC_NAME)) {
+			if (!is_public || is_static) {
+				zend_error(E_WARNING, "The magic method __toBool() must have "
+					"public visibility and cannot be static");
+			}
 		} else if (zend_string_equals_literal(lcname, ZEND_INVOKE_FUNC_NAME)) {
 			if (!is_public || is_static) {
 				zend_error(E_WARNING, "The magic method __invoke() must have "
@@ -4776,6 +4794,24 @@ void zend_begin_method_decl(zend_op_array *op_array, zend_string *name, zend_boo
 					"public visibility and cannot be static");
 			}
 			ce->__toint = (zend_function *) op_array;
+		} else if (zend_string_equals_literal(lcname, ZEND_TOFLOAT_FUNC_NAME)) {
+			if (!is_public || is_static) {
+				zend_error(E_WARNING, "The magic method __toFloat() must have "
+					"public visibility and cannot be static");
+			}
+			ce->__tofloat = (zend_function *) op_array;
+		} else if (zend_string_equals_literal(lcname, ZEND_TOARRAY_FUNC_NAME)) {
+			if (!is_public || is_static) {
+				zend_error(E_WARNING, "The magic method __toArray() must have "
+					"public visibility and cannot be static");
+			}
+			ce->__toarray = (zend_function *) op_array;
+		} else if (zend_string_equals_literal(lcname, ZEND_TOBOOL_FUNC_NAME)) {
+			if (!is_public || is_static) {
+				zend_error(E_WARNING, "The magic method __toBool() must have "
+					"public visibility and cannot be static");
+			}
+			ce->__tobool = (zend_function *) op_array;
 		} else if (zend_string_equals_literal(lcname, ZEND_INVOKE_FUNC_NAME)) {
 			if (!is_public || is_static) {
 				zend_error(E_WARNING, "The magic method __invoke() must have "

@@ -155,6 +155,9 @@ struct _zend_class_entry {
 	union _zend_function *__callstatic;
 	union _zend_function *__tostring;
 	union _zend_function *__toint;
+	union _zend_function *__tofloat;
+	union _zend_function *__toarray;
+	union _zend_function *__tobool;
 	union _zend_function *__debugInfo;
 	union _zend_function *serialize_func;
 	union _zend_function *unserialize_func;

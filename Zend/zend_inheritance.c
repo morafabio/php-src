@@ -126,6 +126,15 @@ static void do_inherit_parent_constructor(zend_class_entry *ce) /* {{{ */
 	if (EXPECTED(!ce->__toint)) {
 		ce->__toint = ce->parent->__toint;
 	}
+	if (EXPECTED(!ce->__tofloat)) {
+		ce->__tofloat = ce->parent->__tofloat;
+	}
+	if (EXPECTED(!ce->__toarray)) {
+		ce->__toarray = ce->parent->__toarray;
+	}
+	if (EXPECTED(!ce->__tobool)) {
+		ce->__tobool = ce->parent->__tobool;
+	}
 	if (EXPECTED(!ce->clone)) {
 		ce->clone = ce->parent->clone;
 	}
@@ -1058,6 +1067,12 @@ static void zend_add_magic_methods(zend_class_entry* ce, zend_string* mname, zen
 		ce->__tostring = fe;
 	} else if (!strncmp(ZSTR_VAL(mname), ZEND_TOINT_FUNC_NAME, ZSTR_LEN(mname))) {
 		ce->__toint = fe;
+	} else if (!strncmp(ZSTR_VAL(mname), ZEND_TOFLOAT_FUNC_NAME, ZSTR_LEN(mname))) {
+		ce->__tofloat = fe;
+	} else if (!strncmp(ZSTR_VAL(mname), ZEND_TOARRAY_FUNC_NAME, ZSTR_LEN(mname))) {
+		ce->__toarray = fe;
+	} else if (!strncmp(ZSTR_VAL(mname), ZEND_TOBOOL_FUNC_NAME, ZSTR_LEN(mname))) {
+		ce->__tobool = fe;
 	} else if (!strncmp(ZSTR_VAL(mname), ZEND_DEBUGINFO_FUNC_NAME, ZSTR_LEN(mname))) {
 		ce->__debugInfo = fe;
 	} else if (ZSTR_LEN(ce->name) == ZSTR_LEN(mname)) {
