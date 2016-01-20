@@ -2106,6 +2106,22 @@ ZEND_API void zend_check_magic_method_implementation(const zend_class_entry *ce,
  		!memcmp(lcname, ZEND_TOSTRING_FUNC_NAME, sizeof(ZEND_TOSTRING_FUNC_NAME)-1) && fptr->common.num_args != 0
 	) {
 		zend_error(error_type, "Method %s::%s() cannot take arguments", ZSTR_VAL(ce->name), ZEND_TOSTRING_FUNC_NAME);
+	} else if (name_len == sizeof(ZEND_TOINT_FUNC_NAME) - 1 &&
+		!memcmp(lcname, ZEND_TOINT_FUNC_NAME, sizeof(ZEND_TOINT_FUNC_NAME)-1) && fptr->common.num_args != 0
+	) {
+		zend_error(error_type, "Method %s::%s() cannot take arguments", ZSTR_VAL(ce->name), ZEND_TOINT_FUNC_NAME);
+	} else if (name_len == sizeof(ZEND_TOFLOAT_FUNC_NAME) - 1 &&
+		!memcmp(lcname, ZEND_TOFLOAT_FUNC_NAME, sizeof(ZEND_TOFLOAT_FUNC_NAME)-1) && fptr->common.num_args != 0
+	) {
+		zend_error(error_type, "Method %s::%s() cannot take arguments", ZSTR_VAL(ce->name), ZEND_TOFLOAT_FUNC_NAME);
+	} else if (name_len == sizeof(ZEND_TOARRAY_FUNC_NAME) - 1 &&
+		!memcmp(lcname, ZEND_TOARRAY_FUNC_NAME, sizeof(ZEND_TOARRAY_FUNC_NAME)-1) && fptr->common.num_args != 0
+	) {
+		zend_error(error_type, "Method %s::%s() cannot take arguments", ZSTR_VAL(ce->name), ZEND_TOARRAY_FUNC_NAME);
+	} else if (name_len == sizeof(ZEND_TOBOOL_FUNC_NAME) - 1 &&
+		!memcmp(lcname, ZEND_TOBOOL_FUNC_NAME, sizeof(ZEND_TOBOOL_FUNC_NAME)-1) && fptr->common.num_args != 0
+	) {
+		zend_error(error_type, "Method %s::%s() cannot take arguments", ZSTR_VAL(ce->name), ZEND_TOBOOL_FUNC_NAME);
 	} else if (name_len == sizeof(ZEND_DEBUGINFO_FUNC_NAME) - 1 &&
 		!memcmp(lcname, ZEND_DEBUGINFO_FUNC_NAME, sizeof(ZEND_DEBUGINFO_FUNC_NAME)-1) && fptr->common.num_args != 0) {
 		zend_error(error_type, "Method %s::%s() cannot take arguments", ZSTR_VAL(ce->name), ZEND_DEBUGINFO_FUNC_NAME);
@@ -2122,7 +2138,7 @@ ZEND_API int zend_register_functions(zend_class_entry *scope, const zend_functio
 	int count=0, unload=0;
 	HashTable *target_function_table = function_table;
 	int error_type;
-	zend_function *ctor = NULL, *dtor = NULL, *clone = NULL, *__get = NULL, *__set = NULL, *__unset = NULL, *__isset = NULL, *__call = NULL, *__callstatic = NULL, *__tostring = NULL, *__debugInfo = NULL;
+	zend_function *ctor = NULL, *dtor = NULL, *clone = NULL, *__get = NULL, *__set = NULL, *__unset = NULL, *__isset = NULL, *__call = NULL, *__callstatic = NULL, *__tostring = NULL, *__toint = NULL, *__tofloat = NULL, *__toarray = NULL, *__tobool = NULL, *__debugInfo = NULL;
 	zend_string *lowercase_name;
 	size_t fname_len;
 	const char *lc_class_name = NULL;
@@ -2280,6 +2296,14 @@ ZEND_API int zend_register_functions(zend_class_entry *scope, const zend_functio
 				__callstatic = reg_function;
 			} else if (zend_string_equals_literal(lowercase_name, ZEND_TOSTRING_FUNC_NAME)) {
 				__tostring = reg_function;
+			} else if (zend_string_equals_literal(lowercase_name, ZEND_TOINT_FUNC_NAME)) {
+				__toint = reg_function;
+			} else if (zend_string_equals_literal(lowercase_name, ZEND_TOFLOAT_FUNC_NAME)) {
+				__tofloat = reg_function;
+			} else if (zend_string_equals_literal(lowercase_name, ZEND_TOARRAY_FUNC_NAME)) {
+				__toarray = reg_function;
+			} else if (zend_string_equals_literal(lowercase_name, ZEND_TOBOOL_FUNC_NAME)) {
+				__tobool = reg_function;
 			} else if (zend_string_equals_literal(lowercase_name, ZEND_GET_FUNC_NAME)) {
 				__get = reg_function;
 				scope->ce_flags |= ZEND_ACC_USE_GUARDS;
@@ -2329,6 +2353,10 @@ ZEND_API int zend_register_functions(zend_class_entry *scope, const zend_functio
 		scope->__call = __call;
 		scope->__callstatic = __callstatic;
 		scope->__tostring = __tostring;
+		scope->__toint = __toint;
+		scope->__tofloat = __tofloat;
+		scope->__toarray = __toarray;
+		scope->__tobool = __tobool;
 		scope->__get = __get;
 		scope->__set = __set;
 		scope->__unset = __unset;
@@ -2372,6 +2400,30 @@ ZEND_API int zend_register_functions(zend_class_entry *scope, const zend_functio
 				zend_error(error_type, "Method %s::%s() cannot be static", ZSTR_VAL(scope->name), ZSTR_VAL(__tostring->common.function_name));
 			}
 			__tostring->common.fn_flags &= ~ZEND_ACC_ALLOW_STATIC;
+		}
+		if (__toint) {
+			if (__toint->common.fn_flags & ZEND_ACC_STATIC) {
+				zend_error(error_type, "Method %s::%s() cannot be static", ZSTR_VAL(scope->name), ZSTR_VAL(__toint->common.function_name));
+			}
+			__toint->common.fn_flags &= ~ZEND_ACC_ALLOW_STATIC;
+		}
+		if (__tofloat) {
+			if (__tofloat->common.fn_flags & ZEND_ACC_STATIC) {
+				zend_error(error_type, "Method %s::%s() cannot be static", ZSTR_VAL(scope->name), ZSTR_VAL(__tofloat->common.function_name));
+			}
+			__tofloat->common.fn_flags &= ~ZEND_ACC_ALLOW_STATIC;
+		}
+		if (__toarray) {
+			if (__toarray->common.fn_flags & ZEND_ACC_STATIC) {
+				zend_error(error_type, "Method %s::%s() cannot be static", ZSTR_VAL(scope->name), ZSTR_VAL(__toarray->common.function_name));
+			}
+			__toarray->common.fn_flags &= ~ZEND_ACC_ALLOW_STATIC;
+		}
+		if (__tobool) {
+			if (__tobool->common.fn_flags & ZEND_ACC_STATIC) {
+				zend_error(error_type, "Method %s::%s() cannot be static", ZSTR_VAL(scope->name), ZSTR_VAL(__tobool->common.function_name));
+			}
+			__tobool->common.fn_flags &= ~ZEND_ACC_ALLOW_STATIC;
 		}
 		if (__get) {
 			if (__get->common.fn_flags & ZEND_ACC_STATIC) {
